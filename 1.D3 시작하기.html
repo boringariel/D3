@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <!-- 위 태그는 한국어가 깨지지 않게 도와준다 -->
+  <title>D3를 이용해서 도형 그리기</title>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <!-- D3를 이용하기 위해 삽입해야 하는 코드 -->
+</head>
+
+<body>
+  <script>
+    var canvas = d3.select('body').append('svg').attr('width', 500).attr('height', 500)
+    //D3를 이용한 그리기. 캔버스 설정을 위한 태그
+
+    //var nm1 = canvas.append('circle').attr('cx', 250).attr('cy', 300).attr('r', 80).attr('fill', 'blue')
+    //원 그리기. fill은 컬러 설정
+
+    //var rect = canvas.append('rect').attr('width', 40).attr('height', 60).attr('x', 100).attr('y', 100).attr('fill', 'gray')
+    //사각형 그리기. xy 좌표와 xy 길이, 색깔 순서대로 입력하였다
+
+    var data = [3, 7, 15]
+    //각 data에 해당하는 도형이 그려질 예정
+    var bars = canvas.selectAll('rect')
+    //사각형 그리기. 위에 입력한 데이터 모두를 사각형으로 지정한다
+      .data(data)
+      .enter()
+      .append('rect')
+      .attr('width', function(d) {
+        return d * 10;
+      })
+      .attr('height', 15)
+      .attr('y', function(d, i) {
+        return i * 100;
+      })
+    //일괄 도형 그리기
+    //enter: 화면상의 개별 rect 추가의 역할을 함
+    //각 변수는 data index를 의미함. 변경해도 무방하다
+  </script>
+</body>
+
+</html>
