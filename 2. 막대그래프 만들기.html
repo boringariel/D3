@@ -1,0 +1,112 @@
+<!doctype HTML>
+<html>
+
+<head>
+  <script src="https://d3js.org/d3.v3.min.js"></script>
+  <!---d3 v3를 사용함--->
+</head>
+
+<body>
+  <p>example</p>
+  <script>
+    //https://www.w3schools.com/graphics/svg_intro.asp 에서 예시자료 확인
+    var w = 500
+    var h = 500
+    var dataset = [2, 4, 6, 8, 10, 11, 13, 15, 17, 19, 30]
+    var canvas = d3.select('body')
+      .append('svg')
+      .attr('width', w)
+      .attr('height', h) //d3: chain method. 명령어 사용시 d3. 생략 가능
+    //여기까지 svg canvas 그리기
+
+    var xscale = d3.scale.ordinal()
+      .domain(d3.range(dataset.length)) //dataset이 순차적으로 반환됨
+      .rangeBands([0, w]) //0 to w까지의 값에 차례대로 할당
+    var yscale = d3.scale.linear()
+      .domain([0, d3.max(dataset)])
+      .range([0, h])
+    //캔버스 밖으로 빠져나가는 크기를 캔버스 크기로 비율 맞춰 축소해 보여줌
+
+    canvas.selectAll('rect')
+      .data(dataset)
+      .enter()
+      .append('rect')
+      .attr('x', function(d, i) {
+        return xscale(i)
+      }) //d: dataset의 요소들, i는 거리
+      .attr('y', function(d) {
+        return h - yscale(d)
+      }) //y좌표 지정. 아래에서 올라오도록 처리함
+      .attr('width', w / dataset.length) //가로 폭을 dataset 요소 수만큼 나누면 막대 사이의 여백이 사라짐
+      .attr('height', function(d) {
+        return yscale(d)
+      })
+      //.attr('fill', 'cyan') //그래프 전체의 색상 선택
+      .attr('fill', function(d) {
+        return "rgb(200,128," + (d * 10) + ")"
+      }) //그라데이션. RGB 팔레트 기준으로 B값을 d*10값으로 치환해 계산
+
+    canvas.selectAll('text') //수치 표시하기
+      .data(dataset)
+      .enter()
+      .append('text')
+      .text(function(d) {
+        return d
+      })
+      .attr('x', function(d, i) {
+        return xscale(i) + (w / dataset.length) / 2
+      })
+      .attr('y', function(d) {
+        return h - yscale(d) + 15
+      })
+      .attr('text-anchor', 'middle')
+      .attr('font-size', '10px')
+      .attr('fill', 'white')
+
+    d3.select('p') //<p>로 묶인 글자를 클릭하면 값이 무작위로 변화
+      .on('click', function() {
+        newValues = dataset.length
+        dataset = []
+        for (var i = 0; i < newValues; i++) {
+          var newNumber = Math.floor(Math.random() * 25)
+          dataset.push(newNumber)
+        }
+        yscale.domain([0, d3.max(dataset)])
+
+        canvas.selectAll('rect')
+          .data(dataset)
+          .transition()
+          .delay(function(d, i) {
+            return i / dataset.length * 100
+          })
+          .duration(1000) //애니메이션 속도
+          .ease('elastic') //linear, quad, cubic, sin, exp, circle, elastic 등 애니메이션 옵션
+          .attr('y', function(d) {
+            return h - yscale(d)
+          })
+          .attr('height', function(d) {
+            return yscale(d)
+          })
+
+          canvas.selectAll('text') //수치 표시하기 코드를 값 변화시 갱신
+            .data(dataset)
+            //.enter() //enter와 append는 지우고 사용
+            //.append('text')
+            .text(function(d) {
+              return d
+            })
+            .attr('x', function(d, i) {
+              return xscale(i) + (w / dataset.length) / 2
+            })
+            .attr('y', function(d) {
+              return h - yscale(d) + 15
+            })
+            .attr('text-anchor', 'middle')
+            .attr('font-size', '10px')
+            .attr('fill', 'white')
+
+      })
+  </script>
+</body>
+
+</html>
